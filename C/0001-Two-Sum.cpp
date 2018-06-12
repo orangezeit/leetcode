@@ -5,7 +5,6 @@ public:
         vector<int> nums_copy(nums.size()), record(2);
 
         nums_copy = nums;
-        
         sort(nums.begin(), nums.end());
         
         for (i = 0; i < nums.size(); ++i) {
@@ -19,19 +18,26 @@ public:
                 if (nums[i] + nums[j] == target) {
                     if (nums[i] != nums[j]) {
                        for (k = 0; k < nums.size(); ++k) {
-                            if (nums[i] == nums_copy[k]) {record[0] = k;}
-                            else if (nums[j] == nums_copy[k]) {record[1] = k;}
+                            if (nums[i] == nums_copy[k]) {
+                                record[0] = k;
+                            } else if (nums[j] == nums_copy[k]) {
+                                record[1] = k;
+                            }
                         }
-                        return record; 
                     } else {
                         for (k = 0; k < nums.size(); ++k) {
-                            if (nums[i] == nums_copy[k]) {record[0] = k;nums[i]++;}
-                            else if (nums[j] == nums_copy[k]) {record[1] = k;}
+                            if (nums[i] == nums_copy[k]) {
+                                record[0] = k;
+                                nums[i]++;
+                            } else if (nums[j] == nums_copy[k]) {
+                                record[1] = k;
+                            }
                         }
-                        return record;
                     }
+                    return record;
                 }
             }
         }
+        
     }
 };
