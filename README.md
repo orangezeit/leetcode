@@ -1,7 +1,7 @@
 # leetcode
 
-## Solved 342 / 816
-* Easy 183
-* Median 149
-* Hard 10
+## Solved 406 / 816
+* Easy 190
+* Median 202
+* Hard 14
 
