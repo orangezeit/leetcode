@@ -1,7 +1,7 @@
     bool isSameTree(TreeNode* p, TreeNode* q) {
-        if (p == NULL && q == NULL) {
+        if (!p && !q) {
             return true;
-        } else if (p == NULL || q == NULL) {
+        } else if (!p || !q) {
             return false;
         }
         
