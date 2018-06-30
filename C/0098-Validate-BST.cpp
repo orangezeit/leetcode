@@ -3,7 +3,7 @@
     // traverse all nodes and record them to see if anywhere is not ordered
     
     void inorderHelper(TreeNode* root, vector<int>& vals) {
-        if (root != NULL) {
+        if (root) {
             inorderHelper(root->left, vals);
             vals.push_back(root->val);
             inorderHelper(root->right, vals);
@@ -11,9 +11,9 @@
     }
     
     bool isValidBST(TreeNode* root) {
-        if (root == NULL) {
+        if (!root) {
             return true;
-        } else if (root->left == NULL && root->right == NULL) {
+        } else if (!root->left && !root->right) {
             return true;
         }
         
