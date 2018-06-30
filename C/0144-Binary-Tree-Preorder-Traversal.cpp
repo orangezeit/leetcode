@@ -1,5 +1,5 @@
     void preorderHelper(TreeNode* root, vector<int>& vals) {
-        if (root != NULL) {
+        if (root) {
             vals.push_back(root->val);
             preorderHelper(root->left, vals);
             preorderHelper(root->right, vals);
