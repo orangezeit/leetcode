@@ -1,5 +1,5 @@
     void inorderHelper(TreeNode* root, vector<int>& vals) {
-        if (root != NULL) {
+        if (root) {
             inorderHelper(root->left, vals);
             vals.push_back(root->val);
             inorderHelper(root->right, vals);
