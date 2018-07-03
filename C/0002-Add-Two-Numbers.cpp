@@ -1,19 +1,15 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
-class Solution {
-public:
     int countNode(ListNode* n) {
+        if (n == NULL) {
+            return 0;
+        }
+        
         int num = 1;
+        
         while (n->next != NULL) {
-            ++num;
+            num++;
             n = n->next;
         }
+        
         return num;
     }
     
@@ -21,32 +17,27 @@ public:
         ListNode* temp = large;
 
         while(small != NULL) {
-            temp->val = temp->val + small->val;
+            temp->val += small->val;
             
             if (temp->val < 10) {
                 temp = temp->next;
             } else {
-                temp->val = temp-> val % 10;
-                    
-                if (temp->next != NULL) {
-                    temp = temp->next;
-                    temp->val = temp->val + 1;
-                } else {
-                    temp->next = new ListNode(1);
-                }
+                temp->val %= 10;
+                temp = temp->next;
+                temp->val++;
             }
+            
             small = small->next;
         }
         
         while (temp != NULL) {
             if (temp->val < 10) {
-                    temp = temp->next;
+                temp = temp->next;
             } else {
                 temp->val = 0;
-                
                 if (temp->next != NULL) {
                     temp = temp->next;
-                    temp->val = temp->val + 1;
+                    temp->val++;
                 } else {
                     temp->next = new ListNode(1);
                 }
@@ -65,4 +56,3 @@ public:
         }
 
     }
-};
