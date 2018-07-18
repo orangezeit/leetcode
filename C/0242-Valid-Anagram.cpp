@@ -1,14 +1,20 @@
     bool isAnagram(string s, string t) {
+        // Method 1
+        sort(s.begin(), s.end());
+        sort(t.begin(), t.end());
+        return s == t;
+        
+        // Method 2
         if (s.length() != t.length()) {
             return false;
         } else {
-            vector<int> s_letters(26, 0), t_letters(26, 0);
+            vector<int> letters(26, 0);
             
             for (int i = 0; i < s.length(); ++i) {
-                s_letters[s[i]-'a']++;
-                t_letters[t[i]-'a']++;
+                letters[s[i]-'a']++;
+                letters[t[i]-'a']--;
             }
             
-            return s_letters == t_letters;
+            return s_letters == vector<int>(26, 0);
         }
     }
