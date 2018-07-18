@@ -15,6 +15,6 @@
                 letters[t[i]-'a']--;
             }
             
-            return s_letters == vector<int>(26, 0);
+            return letters == vector<int>(26, 0);
         }
     }
