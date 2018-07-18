@@ -1,5 +1,3 @@
+    from functools import reduce
     def singleNumber(self, nums):
-        a = 0
-        for i in nums:
-            a ^= i
-        return a
+        return reduce(lambda x,y: x^y, nums, 0)
