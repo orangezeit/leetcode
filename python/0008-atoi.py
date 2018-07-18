@@ -1,12 +1,9 @@
     def myAtoi(self, str):
-        """
-        :type str: str
-        :rtype: int
-        """
-        str += 'c'
         str = str.lstrip()
         
-        if str[0].isnumeric() or str[0] == '-' or str[0] == '+':
+        if str == "":
+            return 0
+        elif str[0].isnumeric() or str[0] == '-' or str[0] == '+':
             for i in range(1, len(str)):
                 if not str[i].isnumeric():
                     str = str[:i]
