@@ -1,16 +1,19 @@
     bool isPowerOfTwo(int n) {
+        // Method 1: Bit Manipulation
+        return !(n & (n-1)) && n > 0;
         
+        // Method 2: Recursion
         if (n <= 0) {
             return false;
         }
         
-        while (n != 1) {
-            if (n % 2 == 1) {
+        while (n) {
+            if (n % 2) {
                 return false;
             } else {
-                n = n / 2;
+                n /= 2;
             }
         }
-        return true;
         
+        return true;
     }
