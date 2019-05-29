@@ -10,34 +10,67 @@
 using namespace std;
 
 class Calculator {
-//private:
-public:
-    string pi = "3.1415926";
+private:
+    string pi, half_pi, double_pi;
+    string e;
+    int p;
 
-    string based(string num, int n, int m) {
-        const string labels = "0123456789abcdefghijklmnopqrstuvwxyz";
-        vector<int> digits;
-
-        reverse(num.begin(), num.end());
-
-        for (int i = 0; i < num.size(); ++i) {
-
-        }
-
+    void calculate_pi() {
+        pi = "3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679";
+        half_pi = divide(pi, "2");
+        double_pi = multiply(pi, "2");
     }
 
-    int digit(string& num) {
+public:
 
-        /*** detect the decimal if exists and remove extra zeros from both sides ***/
+    Calculator(int percision) {
+        p = 2 * percision;
+    }
 
-        int start = 0;
+    string base(string num, int n, int m, bool reversed=false) {
+
+        if (n < 2 || n > 36 || m < 2 || m > 36)
+            return "Error";
+        if (n == m)
+            return num;
+
+        bool sign(num[0] == '-');
+
+        if (sign) num[0] = '0';
+
+        unsigned long long int temp = 0;
+        string ans;
+
+        for (int i = 0; i < num.length(); ++i)
+            num[i] >= '0' && num[i] <= '9' ? temp = (temp * n + num[i] - '0') : temp = (temp * n + num[i] - 'a' + 10);
+
+        while (temp) {
+            int d = temp % m;
+            d < 10 ? ans += d + '0' : ans += d + 'a' - 10;
+            temp /= m;
+        }
+
+        if (sign) ans += '-';
+
+        if (!reversed)
+            reverse(ans.begin(), ans.end());
+        return ans;
+    }
+
+    int digit(string& num, bool test=false) {
+
+        /**
+            remove extra zeros from both sides
+            return location of decimal points
+        **/
+
+        int start(0);
         if (num[start] == '-') start++;
         while (num[start] == '0') start++;
 
         for (int i = start; i < num.length(); ++i) {
             if (num[i] == '.') {
-                int t = 0;
-                int last = num.length() - 1;
+                int d(0), last(num.length() - 1);
 
                 if (num[start] == '.') start--;
                 while (num[last] == '0') last--;
@@ -46,12 +79,11 @@ public:
                     while(i < last) {
                         num[i] = num[i+1];
                         i++;
-                        t++;
+                        d++;
                     }
-
+                if (test) while(num[start] == '0') start++;
                 num = string(num.begin()+start, num.begin()+last);
-                //cout << "t" << endl;
-                return t;
+                return d;
             }
         }
 
@@ -62,6 +94,7 @@ public:
     }
 
     bool int_compare(string num1, string num2) {
+        /** return true if num1 > num2 else false **/
         return num1.length() != num2.length() ? num1.length() > num2.length() : num1 > num2;
     }
 
@@ -87,8 +120,8 @@ public:
 
     string add(string num1, string num2, const char op='+') {
         /**
-            num1 and num2: non-negative, could be decimal
-            op: the sign that applies to ans
+            num1 / num2: non-negative, could be decimal
+            op: the sign of ans
         **/
 
         string ans;
@@ -129,7 +162,7 @@ public:
 
     string subtract(string num1, string num2, const int d=0, const char op='+') {
         /**
-            num1 / num2: non-negative, integer
+            num1 / num2: non-negative, integer (modified during comparison)
             d: location of decimal point
             op: the sign that applies to ans
         **/
@@ -156,9 +189,11 @@ public:
 
         reverse(diff.begin(), diff.end());
 
+        bool flag = true;
         for (int i = 0; i < n1; ++i) {
-            if (!diff[i] && i + d < n1 - 1)
+            if (!diff[i] && i + d < n1 - 1 && flag)
                 continue;
+            flag = false;
             if (i + d == n1)
                 ans += '.';
             ans += diff[i] + '0';
@@ -169,7 +204,7 @@ public:
 
     string pm(string n1, string n2, char op) {
 
-        /** num1 add or subtract num2 **/
+        /** num1 adds or subtracts num2 **/
 
         if (n2[0] == '-') {
             n2[0] = '0';
@@ -191,6 +226,9 @@ public:
     }
 
     string multiply(string num1, string num2) {
+
+        /** num1 multipies num2 **/
+
         string ans;
 
         if ((num1[0] == '-')^(num2[0] == '-'))
@@ -227,55 +265,46 @@ public:
         return ans;
     }
 
-    string divide(string num1, string num2, const int p=0, const int r=-1) { // slow
-        //cout << num1 << " " << num2 << endl;
+    string divide(string num1, string num2, const int r=-1) {
+
         string ans;
 
         if ((num1[0] == '-')^(num2[0] == '-'))
             ans += '-';
 
-        int d1(digit(num1)), d2(digit(num2));
-        if (int_compare(num2, num1)) return "0";
-
+        int d1(digit(num1, true)), d2(digit(num2));
         d1 < d2 ? num1 += string(d2-d1, '0') : num2 += string(d1-d2, '0');
 
-        num1 += string(p+1, '0');
-        //cout << num1 << " *** " << num2 << endl;
+        num1 += string(p, '0');
         string pre = "1";
         string base = "1";
         string res = "0";
         string inter = "0";
-
         string ext = num1;
 
         while (int_compare(ext, num2)) {
-
             while (int_compare(num1, inter)) {
                 res = add(res, base);
                 pre = base;
-
                 base = multiply(base, "2");
                 inter = multiply(num2, res);
-                //cout << res << endl;
             }
-
             res = subtract(res, pre);
             inter = subtract(inter, multiply(pre, num2));
             pre = "1";
             base = "1";
             ext = subtract(num1, inter);
-            //cout << "ni" << num1 << " " << inter << endl;
-            //cout << "c" << ext << endl;
-            //if (ext == num2) break;
         }
 
-        if (ext == num2)
-            res = add(res, "1");
-        ans += res;
-        ans.erase(ans.end()-1);
-        if (p)
-        ans.insert(ans.end()-p, '.');
+        if (ext == num2) res = add(res, "1");
 
+        if (p >= res.length()) {
+            res = "0." + string(p - res.length(), '0') + res;
+        } else {
+            res.insert(res.end()-p, '.');
+        }
+
+        ans += res;
         return ans;
     }
 
@@ -303,7 +332,7 @@ public:
         string base = r;
         string ans = "1";
 
-        while(base != n) {
+        while (base != n) {
             base = add(base, "1");
             ans = multiply(ans, base);
         }
@@ -316,22 +345,15 @@ public:
         return int_compare(s, r) ? combination(n, s) : divide(permutation(n, r), factorial(s));
     }
 
-    string totwo(string num, bool reversed=false) {
-        string b;
-        while(num != "0") {
-            (num[num.length() - 1] - '0') % 2 ? b += '1' : b += '0';
-            num = divide(num, "2");
-            cout << num << endl;
-        }
-        if (reversed)
-            reverse(b.begin(), b.end());
-        return b;
-    }
-
     string int_power(string num1, string num2, int d) {
-        string bin = totwo(num2);
-        if (d)
+        string bin = base(num2, 10, 2, true);
+
+        if (d >= num1.length()) {
+            num1 = "0." + string(d - num1.length(), '0') + num1;
+        } else {
             num1.insert(num1.end()-d, '.');
+        }
+
         string base = num1;
         string res = "1";
 
@@ -345,148 +367,200 @@ public:
         return res;
     }
 
-    string exp(string num, int p) {
-        //return "1";
-        int d(digit(num));
-        string e = "0." + string(p-1, '0') + "1";
-cout << e << endl;
-        string index = "1";
-        string term = "1";
-        string ans = "1";
-        string eh = "1";
-        int k = 0;
-        cout << int_power(num, index, d) << endl;
-/*
-        while (compare(eh, e, k)) {
-            term = divide(int_power(num, index, d), factorial(index), p * 2);
+    string e_power(string num) {
+        string term, x(num), i("1"), ans("1");
+
+        while (term != "0") {
+            term = divide(x, factorial(i));
             ans = add(ans, term);
-            index = add(index, "1");
-            eh = abs(term);
+            x = multiply(num, x);
+            i = add(i, "1");
+            digit(term);
         }
-*/
+
         return ans;
     }
 
-    string ln(string num, int p) {
-        return "1";
+    string exp(string num) {
+        if (e.empty())
+            e = e_power("1");
+
+        int d(digit(num));
+        string ans = int_power(e, string(num.begin(), num.end()-d), 0);
+
+        if (d)
+            ans = multiply(ans, e_power("0." + string(num.end()-d, num.end())));
+        return ans;
+    }
+
+    string ln02(string num) {
+        num = pm(num, "1", '-');
+
+        string term, x(num), i("1"), ans("0");
+        bool flag(true);
+
+        while (term != "0") {
+            term = divide(x, i);
+            cout << term << endl;
+            flag ? ans = pm(ans, term, '+') : ans = pm(ans, term, '-');
+            flag = !flag;
+            x = multiply(num, x);
+            i = add(i, "1");
+            digit(term);
+        }
+
+        return ans;
+    }
+
+    string ln(string num) {
+        if (num[0] = '-') return "Error";
+        int k = 0;
+        //num = divide(num, "2");
+        /*
+        while (num > 2) {
+            num /= 2;
+            k++;
+            if (num == "0") return "Error";
+        }*/
+
+        return num; // k * ln02("2") + ln02(num);
     }
 
     string power(string num1, string num2) {
-        int p = 1;
-
+        cout << num1 << " " << num2 << endl;
         if (num2[0] == '-') {
             num2[0] = '0';
-            return divide("1", power(num1, num2), p);
+            return divide("1", power(num1, num2));
         }
 
         bool ng(num1[0] == '-');
         int d1(digit(num1)), d2(digit(num2));
 
         if (d2) {
-            //return num1 != "0" ? ng1 ? "Error" : exp(multiply(ln(num1, p), num2), p) : "0";
+            return num1 == "0" ? "0" : ng ? "Error" : exp(multiply(ln(num1), num2));
         } else {
-            //return num1 == "0" ? num2 == "0" ? "Error" : "1" : int_power(num1, num2, d1);
+            return num1 == "0" ? num2 == "0" ? "Error" : "1" : int_power(num1, num2, d1);
         }
     }
 
-    string log(string a, string b, int p) {
-        return divide(ln(b, p), ln(a, p), p);
+    string log(string a, string b) {
+        return divide(ln(b), ln(a));
     }
 
-    string sin(string num, int p) {
-        string e = "0." + string(p-1, '0') + "1";
+    string sin(string num) {
+        if (pi.empty())
+            calculate_pi();
 
-        string index = "1";
-        string term = "1";
-        string ans = "0";
-        string eh = num;
-        bool flag = true;
-        int d = 0;
-        //return "a";
-        while (compare(eh, e, d)) {
-            term = divide(power(num, index), factorial(index), p * 2);
-            flag ? ans = add(ans, term) : ans = subtract(ans, term);
+        if (num[0] == '-') {
+            num[0] = '0';
+            return "-" + sin(num);
+        }
+        /*
+        while (num > 2 * pi) {
+            num = pm(num, double_pi, '-');
+        }
+
+        if (num > pi) {
+            return "-" + sin(pm(num, pi, '-'));
+        } else if (num > pi/2) {
+            return sin(pm(pi, num, '-'));
+        }*/
+
+        // between 0 and pi / 2
+
+        string term, x(num), i("1"), ans("0");
+        num = multiply(num, num);
+        bool flag(true);
+
+        while (term != "0") {
+            term = divide(x, factorial(i));
+            flag ? ans = pm(ans, term, '+') : ans = pm(ans, term, '-');
             flag = !flag;
-            index = add(index, "2");
-            eh = abs(term);
-            //cout << "k" << " " << ans << endl;
+            x = multiply(num, x);
+            i = add(i, "2");
+            digit(term);
         }
-        //cout << "a";
+
         return ans;
     }
 
-    string cos(string num, int p) {
-        string zeros(p-1, '0');
-        string e = "0." + zeros + "1";
+    string cos(string num) {
+        if (pi.empty())
+            calculate_pi();
+        //return sin(pm(half_pi, num, '-'));
 
-        string index = "2";
-        string term = "1";
-        string ans = "1";
-        string eh = "1";
-        bool flag = false;
-        int d = 0;
-        //return "a";
-        while (compare(eh, e, d)) {
-            term = divide(power(num, index), factorial(index), p * 2);
-            flag ? ans = add(ans, term) : ans = subtract(ans, term);
-            flag = !flag;
-            index = add(index, "2");
-            eh = abs(term);
-            //cout << "k" << " " << ans << endl;
+        if (num[0] == '-') {
+            num[0] = '0';
+            return cos(num);
         }
-        //cout << "a";
+        /*
+        while (num > 2 * pi) {
+            num = pm(num, double_pi, '-');
+        }
+
+        if (num > pi) {
+            return cos(pm(double_pi, num, '-'));
+        } else if (num > pi/2) {
+            return "-" + cos(pm(pi, num, '-'));
+        }*/
+
+        num = multiply(num, num);
+        string term, x(num), i("2"), ans("1");
+        bool flag(false);
+
+        while (term != "0") {
+            term = divide(x, factorial(i));
+            flag ? ans = pm(ans, term, '+') : ans = pm(ans, term, '-');
+            flag = !flag;
+            x = multiply(num, x);
+            i = add(i, "2");
+            digit(term);
+        }
+
         return ans;
     }
 
-    string tan(string num, int p) {
-        return divide(sin(num, p), cos(num, p), p);
+    string tan(string num) {
+        return divide(sin(num), cos(num));
     }
 
-    string asin(string num, int p) {
-        string e = "0." + string(p-1, '0') + "1";
+    string asin(string num) {
+        string term, x(num), i("0"), ans("0");
+        num = multiply(num, num);
 
-        string index = "1";
-        string term = "1";
-        string ans = "0";
-        string eh = num;
-        bool flag = true;
-        int d = 0;
-        //return "a";
-        while (compare(eh, e, d)) {
-            term = divide(power(num, index), factorial(index), p * 2);
-            flag ? ans = add(ans, term) : ans = subtract(ans, term);
-            flag = !flag;
-            index = add(index, "2");
-            eh = abs(term);
-            //cout << "k" << " " << ans << endl;
+        while (term != "0") {
+            string k = multiply(i, "2");
+            string t1 = multiply(combination(k, i), x);
+            string t2 = multiply(int_power("4", i, 0), add(k, "1"));
+            term = divide(t1, t2);
+            ans = add(ans, term);
+            x = multiply(num, x);
+            i = add(i, "1");
+            digit(term);
         }
-        //cout << "a";
+
         return ans;
     }
 
-    string acos(string num, int p) {
-        return pm(divide(pi, "2"), asin(num, p), '-');
+    string acos(string num) {
+        if (pi.empty()) calculate_pi();
+        return pm(half_pi, asin(num), '-');
     }
 
-    string atan(string num, int p) {
-        string e = "0." + string(p-1, '0') + "1";
+    string atan(string num) {
+        string term, x(num), i("1"), ans("0");
+        num = multiply(num, num);
+        bool flag(true);
 
-        string index = "1";
-        string term = "1";
-        string ans = "0";
-        string eh = num;
-        bool flag = true;
-        int d = 0;
-        //return "a";
-        while (compare(eh, e, d)) {
-            term = divide(power(num, index), index, p * 2);
-            flag ? ans = add(ans, term) : ans = subtract(ans, term);
+        while (term != "0") {
+            term = divide(x, i);
+            flag ? ans = pm(ans, term, '+') : ans = pm(ans, term, '-');
             flag = !flag;
-            index = add(index, "2");
-            eh = abs(term);
-            //cout << "k" << " " << ans << endl;
+            x = multiply(num, x);
+            i = add(i, "2");
+            digit(term);
         }
-        //cout << "a";
+
         return ans;
     }
 
@@ -504,8 +578,18 @@ cout << e << endl;
         nums.back() += eq[0];
 
         for (int i = 1; i < eq.length(); ++i) {
-            if (is_op(eq[i]))  {
-                if (!pows.empty()) {
+            if ((eq[i] >= '0' && eq[i] <= '9') || eq[i] == '.')  {
+                if (nums.empty())
+                    nums.push_back("");
+                else if (is_op(eq[i-1]) && nums.back() != "-")
+                    nums.push_back("");
+                nums.back() += eq[i];
+
+            } else if (eq[i] == '^') {
+                pows.push(nums.back());
+                nums.pop_back();
+            } else {
+                if (pows.size() > 1) {
                     pows.push(nums.back());
                     nums.pop_back();
                     while (pows.size() > 1) {
@@ -513,19 +597,11 @@ cout << e << endl;
                         pows.pop();
                         pows.top() = power(pows.top(), temp);
                     }
+                    cout << "p" << pows.top();
                     nums.push_back(pows.top());
                     pows.pop();
                 }
                 is_op(eq[i-1]) ? nums.push_back("-") : ops.push_back(eq[i]);
-            } else if (eq[i] == '^') {
-                pows.push(nums.back());
-                nums.pop_back();
-            } else {
-                if (nums.empty())
-                    nums.push_back("");
-                else if (is_op(eq[i-1]) && nums.back() != "-")
-                    nums.push_back("");
-                nums.back() += eq[i];
             }
         }
 
@@ -558,21 +634,22 @@ cout << e << endl;
             nums.push_front(pm(temp1, temp2, ops2.front()));
             ops2.pop();
         }
-        //cout << "ans: " << nums.back() << endl;
+        cout << "ans: " << nums.back() << endl;
         return nums.back();
     }
 
     string eval(string eps) {
         stack<string> bkts;
 
-        if (eps[0] != '(')
-            bkts.push("");
+        bkts.push("");
 
         for (int i = 0; i < eps.length(); ++i) {
             if (eps[i] == '(') {
                 bkts.push("");
             } else if (eps[i] == ')') {
+                if (bkts.size() < 2) return "Error: Extra right brackets";
                 string temp = inner(bkts.top());
+                if (temp == "Error") return "Error";
                 bkts.pop();
                 bkts.top() += temp;
             } else {
@@ -580,21 +657,25 @@ cout << e << endl;
             }
         }
 
+        if (bkts.size() > 1)
+            return "Error: Extra left brackets";
         return inner(bkts.top());
     }
 };
 
 int main() {
-    Calculator c;
+    Calculator c(2);
     string str;
-    //cin >> str;
-    //cout << c.eval(str) << endl;
 
     string num1 = "1.23", num2 = "5.00";
     char op = '+';
-    string test = c.divide("22", "2");
+    string n = "0.00023";
+    string test = c.eval("2*2+2^-2*8"); // 54s
+    //string test = c.int_power(c.e, "2", 0);
+    //string test2 = c.exp("45.67");
     //string num3 = "-0000.0002300400";
     //string t = c.add("0.23", "5.00", op);
     cout << test << endl;
+    //cout << test2 << endl;
     return 0;
 }
