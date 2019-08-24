@@ -1,8 +1,9 @@
 # leetcode
 
 ## Solved 406 / 816
-
-[![num_solved](https://img.shields.io/badge/solved-763/1164-blue.svg)](https://www.python.org/)
-[![num_easy](https://img.shields.io/badge/easy-328-brightgreen.svg)](https://docs.scipy.org/doc/)
-[![num_median](https://img.shields.io/badge/scipy-1.3-yellow.svg)](https://docs.scipy.org/doc/)
-[![num_hard](https://img.shields.io/badge/hard-44-red.svg)](https://docs.scipy.org/doc/)
+[![num_todo](https://img.shields.io/badge/ToDo-350/1168-lightgrey.svg)](https://leetcode.com/problemset/all/)
+[![num_attempted](https://img.shields.io/badge/Attempted-41/1168-lightgrey.svg)](https://leetcode.com/problemset/all/)
+[![num_solved](https://img.shields.io/badge/Solved-777/1168-blue.svg)](https://leetcode.com/problemset/all/)
+[![num_easy](https://img.shields.io/badge/Easy-329-brightgreen.svg)](https://leetcode.com/problemset/all/?difficulty=Easy/)
+[![num_median](https://img.shields.io/badge/Median-401-yellow.svg)](https://leetcode.com/problemset/all/?difficulty=Medium/)
+[![num_hard](https://img.shields.io/badge/Hard-47-red.svg)](https://leetcode.com/problemset/all/?difficulty=Hard/)
