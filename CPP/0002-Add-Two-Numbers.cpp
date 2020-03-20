@@ -1,58 +1,34 @@
-    int countNode(ListNode* n) {
-        if (n == NULL) {
-            return 0;
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        ListNode* num = new ListNode(0);
+        ListNode* head = num;
+
+        while (l1 || l2) {
+            if (l1) {
+                head->val += l1->val;
+                l1 = l1->next;
+            }
+            if (l2) {
+                head->val += l2->val;
+                l2 = l2->next;
+            }
+            if (head->val >= 10) {
+                head->next = new ListNode(1);
+                head->val %= 10;
+            } else if (l1 || l2)
+                head->next = new ListNode(0);
+            head = head->next;
         }
-        
-        int num = 1;
-        
-        while (n->next != NULL) {
-            num++;
-            n = n->next;
-        }
-        
+
         return num;
     }
-    
-    ListNode* editNode(ListNode* large, ListNode* small) {
-        ListNode* temp = large;
-
-        while(small != NULL) {
-            temp->val += small->val;
-            
-            if (temp->val < 10) {
-                temp = temp->next;
-            } else {
-                temp->val %= 10;
-                temp = temp->next;
-                temp->val++;
-            }
-            
-            small = small->next;
-        }
-        
-        while (temp != NULL) {
-            if (temp->val < 10) {
-                temp = temp->next;
-            } else {
-                temp->val = 0;
-                if (temp->next != NULL) {
-                    temp = temp->next;
-                    temp->val++;
-                } else {
-                    temp->next = new ListNode(1);
-                }
-            }
-        }
-        
-        return large;
-    }
-    
-    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
-        
-        if (countNode(l1) > countNode(l2)) {
-            return editNode(l1, l2);
-        } else {
-            return editNode(l2, l1);
-        }
-
-    }
+};

@@ -1,6 +1,8 @@
+class Solution {
+public:
     int romanToInt(string s) {
         vector<int> nums(s.length() + 1);
-        
+
         for (int i = 0; i < s.length(); ++i) {
             if (s[i] == 'I') {
                 nums[i] = 1;
@@ -18,13 +20,13 @@
                 nums[i] = 1000;
             }
         }
-        
-        nums.back() = 0;
+
         int sum = 0;
-        
+
         for (int i = nums.size()-1; i >= 1; --i) {
             nums[i-1] >= nums[i] ? sum += nums[i-1] : sum -= nums[i-1];
         }
-        
+
         return sum;
     }
+};

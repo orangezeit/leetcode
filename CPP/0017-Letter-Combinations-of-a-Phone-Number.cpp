@@ -1,29 +1,24 @@
-    void combinationHelper(string digits, vector<string> dict, vector<string>& combinations, string combination) {
-
-        if (digits.empty()) {
-            combinations.push_back(combination);
-        } else {
-            for (int j = 0; j < dict[digits[0]-'2'].size(); ++j) {
-                char c = digits[0];
-                combination += dict[digits[0]-'2'][j];
-                digits.erase(0,1);
-                    
-                combinationHelper(digits, dict, combinations, combination);
-                    
-                combination.pop_back();
-                digits.insert(0, 1, c);
-            }
-        }
-    }
-    
+class Solution {
+public:
     vector<string> letterCombinations(string digits) {
-        vector<string> dict = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
-        vector<string> combinations;
-        
-        if(digits.length() == 0) {
-            return combinations;
-        }
-        
-        combinationHelper(digits, dict, combinations, "");
-        return combinations;
+        vector<string> ans;
+        if (digits.empty()) return ans;
+
+        const vector<string> dict({"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"});
+        string str;
+
+        function<void(const int&, string&)> dfs = [&](const int& i, string& s){
+            if (i == digits.size()) {
+                ans.push_back(s);
+                return;
+            }
+            for (const char& c: dict[digits[i] - '2']) {
+                s += c;
+                dfs(i + 1, s);
+                s.pop_back();
+            }
+        };
+        dfs(0, str);
+        return ans;
     }
+};

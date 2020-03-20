@@ -1,3 +1,5 @@
+class Solution {
+public:
     string combineRoman(vector<string> strs, int digit) {
         if (digit == 1) {
             return strs[0];
@@ -24,19 +26,15 @@
         int tens = 1000;
         int digits = 3;
         string str;
-        
-        while (num != 0) {
-            if (num / tens != 0) {
-                if (digits == 3) {
-                    str += string(num / tens, 77);
-                } else {
-                    str += combineRoman(infos[digits], num / tens);
-                }
-            }
+
+        while (num) {
+            if (num / tens)
+                str += digits == 3 ? string(num / tens, 77) : combineRoman(infos[digits], num / tens);
             num -= (num / tens * tens);
             tens /= 10;
             digits--;
         }
-        
+
         return str;
     }
+};

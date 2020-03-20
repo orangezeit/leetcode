@@ -1,19 +1,25 @@
-    void bracketHelper(int x, int y, string str, vector<string>& strs) {
-        if (x == 0 && y == 0) {
-            strs.push_back(str);
-        } else if (x <= y && x >= 0) {
-            str += "(";
-            bracketHelper(x-1, y, str, strs);
-            str.pop_back();
-            
-            str += ")";
-            bracketHelper(x, y-1, str, strs);
-            str.pop_back();
-        }
-    }
-    
+class Solution {
+public:
     vector<string> generateParenthesis(int n) {
-        vector<string> strs;
-        bracketHelper(n, n, "", strs);
-        return strs;
+        vector<string> ans;
+        string str;
+        function<void(const int&, string&)> generate = [&](const int& i, string& s) {
+            if (s.length() == 2 * n) {
+                if (!i) ans.push_back(s);
+                return;
+            }
+            if (i <= n) {
+                s += '(';
+                generate(i + 1, s);
+                s.pop_back();
+            }
+            if (i) {
+                s += ')';
+                generate(i - 1, s);
+                s.pop_back();
+            }
+        };
+        generate(0, str);
+        return ans;
     }
+};
