@@ -1,22 +1,11 @@
-    int bitCount(int n) {
-        int c = 0;
-        
-        while (n) {
-            if (n % 2) {
-                c++;
-            }
-            n /= 2;
-        }
-        
-        return c;
-    }
-    
-    vector<int> countBits(int num) {
-        vector<int> bits(num+1);
-        
-        for(int i = 0; i <= num; ++i) {
-            bits[i] = bitCount(i);
-        }
-        
+class Solution {
+public:
+    vector<int> countBits(int n) {
+        vector<int> bits(n + 1);
+
+        for(int i = 1; i <= n; ++i)
+            bits[i] = i % 2 ? bits[i - 1] + 1 : bits[i / 2];
+
         return bits;
     }
+};
