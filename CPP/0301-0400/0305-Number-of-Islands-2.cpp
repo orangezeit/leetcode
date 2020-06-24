@@ -1,52 +1,44 @@
-class UnionFindDynamic {
-private:
-    unordered_map<int, int> ranks;
-public:
-    unordered_map<int, int> parents;
+template<typename T>
+struct DynamicUnion {
+    unordered_map<T, T> parents;
+    unordered_map<T, int> ranks;
 
-    int find(int i) {
-        if (i != parents[i])
-            parents[i] = find(parents[i]);
-        return parents[i];
+    constexpr T find(const T& x) {
+        if (x != parents[x])
+            parents[x] = find(parents[x]);
+        return parents[x];
     }
 
-    void unite(int i, int j, int& cnt) {
-        int pi = find(i);
-        int pj = find(j);
-        if (pi != pj) cnt--;
-        ranks[pi] >= ranks[pj] ? parents[pj] = pi : parents[pi] = pj;
-        if (ranks[pi] == ranks[pj]) ranks[pi]++;
+    constexpr void unite(const T& x, const T& y) {
+        const T px(find(x)), py(find(y));
+        if (px == py) return;
+        ranks[px] >= ranks[py] ? parents[py] = px : parents[px] = py;
+        if (ranks[px] == ranks[py]) ranks[px]++;
     }
 };
 
 class Solution {
 public:
-    vector<int> numIslands2(int m, int n, vector<vector<int>>& positions) {
-        //sort(positions.begin(), positions.end());
-        UnionFindDynamic uf;
-        vector<int> ans(positions.size());
-        int dirs[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-        int i(0);
-        int cnt(0);
+    vector<int> numIslands2(int m, int n, vector<vector<int>>& ps) {
+        DynamicUnion<int> uf;
+        const int dirs[5] = {0, -1, 0, 1, 0};
+        vector<int> ans(ps.size());
 
-        for (const vector<int>& p: positions) {
-            if (uf.parents.count(p[0] * n + p[1])) {
-                ans[i++] = cnt;
-                continue;
+        for (int i = 0; i < ps.size(); ++i) {
+            int x(ps[i][0]), y(ps[i][1]);
+            ans[i] = i ? ans[i - 1] : 0;
+            if (uf.parents.count(x * n + y)) continue;
+
+            ans[i]++;
+            uf.parents[x * n + y] = x * n + y;
+
+            for (int k = 0; k < 4; ++k) {
+                int nx(x + dirs[k]), ny(y + dirs[k + 1]);
+                if (nx < 0 || nx >= m || ny < 0 || ny >= n || !uf.parents.count(nx * n + ny)) continue;
+                if (uf.find(x * n + y) == uf.find(nx * n + ny)) continue;
+                ans[i]--;
+                uf.unite(x * n + y, nx * n + ny);
             }
-
-            uf.parents[p[0] * n + p[1]] = p[0] * n + p[1];
-
-            for (int i = 0; i < 4; ++i) {
-                int newx = p[0] + dirs[i][0];
-                int newy = p[1] + dirs[i][1];
-
-                if (newx < 0 || newx >= m || newy < 0 || newy >= n) continue;
-                if (uf.parents.count(newx * n + newy))
-                    uf.unite(p[0] * n + p[1], newx * n + newy, cnt);
-            }
-
-            ans[i++] = ++cnt;
         }
         return ans;
     }

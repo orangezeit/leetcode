@@ -1,26 +1,20 @@
-class UnionFindStatic {
-private:
-    vector<int> ranks;
-public:
-    vector<int> parents;
-    UnionFindStatic(int n) {
-        parents.resize(n);
-        ranks.resize(n);
+struct StaticUnion {
+    vector<int> parents, ranks;
+    StaticUnion(int n) : parents(n), ranks(n) {
         iota(parents.begin(), parents.end(), 0);
     }
 
-    int find(int i) {
-        if (i != parents[i])
-            parents[i] = find(parents[i]);
-        return parents[i];
+    int find(const int& x) {
+        if (x != parents[x])
+            parents[x] = find(parents[x]);
+        return parents[x];
     }
 
-    void unite(int i, int j) {
-        int pi = find(i);
-        int pj = find(j);
-
-        ranks[pi] >= ranks[pj] ? parents[pj] = pi : parents[pi] = pj;
-        if (ranks[pi] == ranks[pj]) ranks[pi]++;
+    void unite(const int& x, const int& y) {
+        int px(find(x)), py(find(y));
+        if (px == py) return;
+        ranks[px] >= ranks[py] ? parents[py] = px : parents[px] = py;
+        if (ranks[px] == ranks[py]) ranks[px]++;
     }
 };
 
@@ -29,15 +23,12 @@ public:
     int regionsBySlashes(vector<string>& grid) {
         int m = grid.size();
         int n = grid[0].length();
-        //cout << m << n << endl;
-        int c = 4 * m * n;
-        UnionFindStatic uf = UnionFindStatic(c);
+        StaticUnion uf(4 * m * n);
 
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                //cout << i << j << endl;
                 int base = 4 * (j + i * n);
-                //  + (0, 1, 2, 3)
+
                 if (grid[i][j] != '/') {
                     uf.unite(base, base + 3);
                     uf.unite(base + 1, base + 2);
@@ -53,8 +44,7 @@ public:
             }
         }
 
-        unordered_set<int> regions;
-        for (const int& p: uf.parents) regions.insert(uf.find(p));
-        return regions.size();
+        for (int& i: uf.parents) i = uf.find(i);
+        return unordered_set<int>(uf.parents.begin(), uf.parents.end()).size();
     }
 };

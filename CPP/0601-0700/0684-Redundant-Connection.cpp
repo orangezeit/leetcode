@@ -1,32 +1,32 @@
-struct UnionFind {
-    unordered_map<int, int> parents, ranks;
-    int find(int x) {
-        if (x != parents[x]) parents[x] = find(parents[x]);
+template<typename T>
+struct DynamicUnion {
+    unordered_map<T, T> parents;
+    unordered_map<T, int> ranks;
+
+    constexpr T find(const T& x) {
+        if (x != parents[x])
+            parents[x] = find(parents[x]);
         return parents[x];
     }
-    void unite(int x, int y) {
-        int px(find(x)), py(find(y));
+
+    constexpr void unite(const T& x, const T& y) {
+        const T px(find(x)), py(find(y));
         if (px == py) return;
-        if (ranks[px] > ranks[py]) parents[py] = px;
-        else if (ranks[px] < ranks[py]) parents[px] = py;
-        else {
-            parents[py] = px;
-            ranks[px]++;
-        }
+        ranks[px] >= ranks[py] ? parents[py] = px : parents[px] = py;
+        if (ranks[px] == ranks[py]) ranks[px]++;
     }
 };
+
 class Solution {
 public:
     vector<int> findRedundantConnection(vector<vector<int>>& edges) {
-        UnionFind uf;
+        DynamicUnion<int> uf;
 
-        for (int i = 0; i < edges.size(); ++i) {
-            int u = edges[i][0];
-            int v = edges[i][1];
-            if (uf.parents[u] && uf.parents[v] && uf.find(u) == uf.find(v)) return {u, v};
-            if (!uf.parents[u])uf.parents[u] = u;
-            if (!uf.parents[v])uf.parents[v] = v;
-            uf.unite(u, v);
+        for (const vector<int>& e: edges) {
+            if (uf.parents[e[0]] && uf.parents[e[1]] && uf.find(e[0]) == uf.find(e[1])) return {e[0], e[1]};
+            if (!uf.parents[e[0]]) uf.parents[e[0]] = e[0];
+            if (!uf.parents[e[1]]) uf.parents[e[1]] = e[1];
+            uf.unite(e[0], e[1]);
         }
 
         return {};

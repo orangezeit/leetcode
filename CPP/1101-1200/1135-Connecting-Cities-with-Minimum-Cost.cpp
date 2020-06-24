@@ -1,51 +1,41 @@
-class UnionFindStatic {
-private:
-    vector<int> ranks;
-public:
-    vector<int> parents;
-    UnionFindStatic(int n) {
-        parents.resize(n);
-        ranks.resize(n);
+struct StaticUnion {
+    vector<int> parents, ranks;
+    StaticUnion(int n) : parents(n), ranks(n) {
         iota(parents.begin(), parents.end(), 0);
     }
 
-    int find(int i) {
-        if (i != parents[i])
-            parents[i] = find(parents[i]);
-        return parents[i];
+    int find(const int& x) {
+        if (x != parents[x])
+            parents[x] = find(parents[x]);
+        return parents[x];
     }
 
-    void unite(int i, int j) {
-        int pi = find(i);
-        int pj = find(j);
-
-        ranks[pi] >= ranks[pj] ? parents[pj] = pi : parents[pi] = pj;
-        if (ranks[pi] == ranks[pj]) ranks[pi]++;
+    void unite(const int& x, const int& y) {
+        int px(find(x)), py(find(y));
+        if (px == py) return;
+        ranks[px] >= ranks[py] ? parents[py] = px : parents[px] = py;
+        if (ranks[px] == ranks[py]) ranks[px]++;
     }
 };
 
 class Solution {
 public:
-    int minimumCost(int N, vector<vector<int>>& connections) {
-        sort(connections.begin(), connections.end(), [](const vector<int>& a, const vector<int>& b) {return a[2] < b[2];});
-        //cout << "a";
-        UnionFindStatic uf = UnionFindStatic(N);
+    int minimumCost(int n, vector<vector<int>>& connections) {
+        sort(connections.begin(), connections.end(),
+             [](const vector<int>& a, const vector<int>& b) {return a[2] < b[2];});
+
+        StaticUnion uf(n);
         int costs(0);
 
-        for (vector<int>& c: connections) {
-            //cout << c.size() << endl;
+        for (vector<int>& c: connections)
             if (uf.find(c[0] - 1) != uf.find(c[1] - 1)) {
-                //cout << "b";
                 costs += c[2];
                 uf.unite(c[0] - 1, c[1] - 1);
             }
-        }
-        //cout << "a";
-        unordered_set<int> rec;
-        for (const int& i: uf.parents) {
-            rec.insert(uf.find(i));
-            if (rec.size() > 1) return -1;
-        }
+
+        for (const int& i: uf.parents)
+            if (uf.find(0) != uf.find(i))
+                return -1;
         return costs;
     }
 };

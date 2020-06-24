@@ -20,16 +20,25 @@ struct StaticUnion {
 
 class Solution {
 public:
-    int removeStones(vector<vector<int>>& stones) {
-        int n(stones.size());
+    int makeConnected(int n, vector<vector<int>>& connections) {
         StaticUnion uf(n);
+        unordered_map<int, unordered_set<int>> cnts;
+        int extra(0);
+        unordered_set<int> g;
 
-        for (int i = 0; i < n; ++i)
-            for (int j = i + 1; j < n; ++j)
-                if (stones[i][0] == stones[j][0] || stones[i][1] == stones[j][1])
-                    uf.unite(i, j);
-        for (int i = 0; i < n; ++i)
-            uf.find(i);
-        return stones.size() - unordered_set<int>(uf.parents.begin(), uf.parents.end()).size();
+        for (vector<int>& c: connections) {
+            cnts[c[0]].insert(c[1]);
+            cnts[c[1]].insert(c[0]);
+            if (uf.find(c[0]) != uf.find(c[1])) {
+                uf.unite(c[0], c[1]);
+            } else {
+                extra++;
+            }
+        }
+
+        for (const int& i: uf.parents)
+            g.insert(uf.find(i));
+
+        return extra + 1 < g.size() ? -1 : (g.size() - 1);
     }
 };

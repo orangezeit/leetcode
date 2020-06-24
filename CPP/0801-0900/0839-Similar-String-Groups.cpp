@@ -20,31 +20,29 @@ struct StaticUnion {
 
 class Solution {
 public:
-    // 51/52 passed, could have bugs
-    int minMalwareSpread(vector<vector<int>>& graph, vector<int>& initial) {
-        int n(graph.size());
+    int numSimilarGroups(vector<string>& a) {
+        int n(a.size());
         StaticUnion uf(n);
+
+        auto similar = [](const string& s, const string& t) {
+            int n = 0;
+
+            for (int i = 0; i < s.length(); ++i)
+                if (s[i] != t[i])
+                    if (++n > 2)
+                        return false;
+
+            return true;
+        };
 
         for (int i = 0; i < n; ++i)
             for (int j = i + 1; j < n; ++j)
-                if (graph[i][j])
+                if (uf.find(i) != uf.find(j) && similar(strs[i], strs[j]))
                     uf.unite(i, j);
 
-        unordered_map<int, int> cnts;
-
         for (int i = 0; i < n; ++i)
-            cnts[uf.find(i)]++;
+            uf.find(i);
 
-        int s = 0, ans = n;
-
-        for (const int& i: initial) {
-            int ns = cnts[uf.parents[i]];
-            if (ns > s || ns == s && i < ans) {
-                s = ns;
-                ans = i;
-            }
-        }
-
-        return ans;
+        return unordered_set<int>(uf.parents.begin(), uf.parents.end()).size();
     }
 };

@@ -1,42 +1,34 @@
-class UnionFind {
-private:
-    vector<int> ranks;
-public:
-    vector<int> parents;
-    UnionFind(int n) {
-        parents.resize(n);
-        ranks.resize(n);
+struct StaticUnion {
+    vector<int> parents, ranks;
+    StaticUnion(int n) : parents(n), ranks(n) {
         iota(parents.begin(), parents.end(), 0);
     }
 
-    int find(const int& i) {
-        if (i != parents[i])
-            parents[i] = find(parents[i]);
-        return parents[i];
+    int find(const int& x) {
+        if (x != parents[x])
+            parents[x] = find(parents[x]);
+        return parents[x];
     }
 
-    void unite(const int& i, const int& j) {
-        int pi = find(i);
-        int pj = find(j);
-
-        ranks[pi] >= ranks[pj] ? parents[pj] = pi : parents[pi] = pj;
-        if (ranks[pi] == ranks[pj]) ranks[pi]++;
+    void unite(const int& x, const int& y) {
+        int px(find(x)), py(find(y));
+        if (px == py) return;
+        ranks[px] >= ranks[py] ? parents[py] = px : parents[px] = py;
+        if (ranks[px] == ranks[py]) ranks[px]++;
     }
 };
 
 class Solution {
 public:
     int countComponents(int n, vector<vector<int>>& edges) {
-        UnionFind uf = UnionFind(n);
+        StaticUnion uf(n);
 
-        for (int i = 0; i < edges.size(); ++i)
-            uf.unite(edges[i][0], edges[i][1]);
+        for (const vector<int>& e: edges)
+            uf.unite(e[0], e[1]);
 
         for (int i = 0; i < n; ++i)
             uf.find(i);
 
-        unordered_set<int> res(uf.parents.begin(), uf.parents.end());
-
-        return res.size();
+        return unordered_set<int>(uf.parents.begin(), uf.parents.end()).size();
     }
 };

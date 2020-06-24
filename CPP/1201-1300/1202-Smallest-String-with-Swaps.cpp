@@ -20,31 +20,28 @@ struct StaticUnion {
 
 class Solution {
 public:
-    // 51/52 passed, could have bugs
-    int minMalwareSpread(vector<vector<int>>& graph, vector<int>& initial) {
-        int n(graph.size());
+    string smallestStringWithSwaps(string s, vector<vector<int>>& pairs) {
+        int n(s.length());
         StaticUnion uf(n);
 
-        for (int i = 0; i < n; ++i)
-            for (int j = i + 1; j < n; ++j)
-                if (graph[i][j])
-                    uf.unite(i, j);
+        for (const vector<int>& pair: pairs)
+            uf.unite(pair[0], pair[1]);
 
-        unordered_map<int, int> cnts;
+        unordered_map<int, vector<int>> rec;
 
         for (int i = 0; i < n; ++i)
-            cnts[uf.find(i)]++;
+            rec[uf.find(i)].emplace_back(i);
 
-        int s = 0, ans = n;
-
-        for (const int& i: initial) {
-            int ns = cnts[uf.parents[i]];
-            if (ns > s || ns == s && i < ans) {
-                s = ns;
-                ans = i;
-            }
+        for (const auto& [k, v]: rec) {
+            vector<int> w(v);
+            string t(s);
+            sort(w.begin(), w.end(),
+                 [&s](const int& t1, const int& t2){return s[t1] < s[t2];});
+            for (int i = 0; i < w.size(); ++i)
+                t[v[i]] = s[w[i]];
+            s = t;
         }
 
-        return ans;
+        return s;
     }
 };

@@ -1,36 +1,37 @@
+struct StaticUnion {
+    vector<int> parents, ranks;
+    StaticUnion(int n) : parents(n), ranks(n) {
+        iota(parents.begin(), parents.end(), 0);
+    }
+
+    int find(const int& x) {
+        if (x != parents[x])
+            parents[x] = find(parents[x]);
+        return parents[x];
+    }
+
+    void unite(const int& x, const int& y) {
+        int px(find(x)), py(find(y));
+        if (px == py) return;
+        ranks[px] >= ranks[py] ? parents[py] = px : parents[px] = py;
+        if (ranks[px] == ranks[py]) ranks[px]++;
+    }
+};
 
 class Solution {
 public:
-    int find(int i, vector<int>& parents) {
-        if (i != parents[i])
-            parents[i] = find(parents[i], parents);
-        return parents[i];
-    }
+    int findCircleNum(vector<vector<int>>& m) {
+        int n(m.size());
+        StaticUnion uf(n);
 
-    void unite(int i, int j, vector<int>& parents) {
-        int pi = find(i, parents);
-        int pj = find(j, parents);
+        for (int i = 0; i < n; ++i)
+            for (int j = i + 1; j < n; ++j)
+                if (m[i][j])
+                    uf.unite(i, j);
 
-        if (pi != pj)
-            parents[pj] = pi;
-    }
+        for (int i = 0; i < n; ++i)
+            uf.find(i);
 
-    int findCircleNum(vector<vector<int>>& M) {
-        vector<int> parents(M.size());
-
-        for (int i = 0; i < M.size(); ++i)
-            parents[i] = i;
-
-        for (int i = 0; i < M.size(); ++i)
-            for (int j = i; j < M.size(); ++j)
-                if (M[i][j])
-                    unite(i, j, parents);
-
-        for (int i = 0; i < M.size(); ++i)
-            find(i, parents);
-
-        unordered_set<int> res(parents.begin(), parents.end());
-
-        return res.size();
+        return unordered_set<int>(uf.parents.begin(), uf.parents.end()).size();
     }
 };

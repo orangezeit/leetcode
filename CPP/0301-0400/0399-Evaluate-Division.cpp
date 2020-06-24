@@ -1,59 +1,59 @@
+template<typename T>
+struct DynamicUnion { // special case
+    unordered_map<T, T> parents;
+
+    constexpr T find(const T& x) {
+        if (x != parents[x])
+            parents[x] = find(parents[x]);
+        return parents[x];
+    }
+
+    constexpr void unite(const T& x, const T& y) {
+        const T px(find(x)), py(find(y));
+        if (px != py) parents[px] = py;
+    }
+};
+
+
 class Solution {
 public:
-    string find(string s, unordered_map<string, string>& acctUni) {
-        if (s != acctUni[s])
-            acctUni[s] = find(acctUni[s], acctUni);
-        return acctUni[s];
-    }
+    vector<double> calcEquation(vector<vector<string>>& es, vector<double>& vs,
+                                vector<vector<string>>& qs) {
+        DynamicUnion<string> uf;
+        unordered_map<string, double> vars;
 
-    void unite(string s, string t, unordered_map<string, string>& acctUni) {
-        string ps = find(s, acctUni);
-        string pt = find(t, acctUni);
+        for (int i = 0; i < vs.size(); ++i) {
+            if (uf.parents[es[i][0]].empty()) uf.parents[es[i][0]] = es[i][0];
+            if (uf.parents[es[i][1]].empty()) uf.parents[es[i][1]] = es[i][1];
 
-        if (ps != pt) {
-            acctUni[pt] = ps;
-        }
-    }
-
-    vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
-        unordered_map<string, string> gp;
-        unordered_map<string, double> vals;
-
-        for (int i = 0; i < values.size(); ++i) {
-
-            if (gp.find(equations[i][0]) == gp.end())
-                gp[equations[i][0]] = equations[i][0];
-            if (gp.find(equations[i][1]) == gp.end())
-                gp[equations[i][1]] = equations[i][1];
-
-            if (vals.find(equations[i][0]) == vals.end() && vals.find(equations[i][1]) == vals.end()) {
-                vals[equations[i][0]] = values[i];
-                vals[equations[i][1]] = 1.0;
-            } else if (vals.find(equations[i][0]) == vals.end()) {
-                vals[equations[i][0]] = vals[equations[i][1]] * values[i];
-            } else if (vals.find(equations[i][1]) == vals.end()) {
-                vals[equations[i][1]] = vals[equations[i][0]] / values[i];
+            if (!vars.count(es[i][0]) && !vars.count(es[i][1])) {
+                vars[es[i][0]] = vs[i];
+                vars[es[i][1]] = 1.0;
+            } else if (!vars.count(es[i][0])) {
+                vars[es[i][0]] = vars[es[i][1]] * vs[i];
+            } else if (!vars.count(es[i][1])) {
+                vars[es[i][1]] = vars[es[i][0]] / vs[i];
             } else {
 
-                double n = vals[equations[i][1]];
+                double x = vars[es[i][1]];
 
-                for (auto it = gp.begin(); it != gp.end(); ++it) {
-                    if (it->second == equations[i][1])
-                        vals[it->first] /= n * values[i];
+                for (const auto& [k, v]: uf.parents) {
+                    if (v == es[i][0])
+                        vars[k] *= x * vs[i];
                 }
             }
-            unite(equations[i][0], equations[i][1], gp);
+            uf.unite(es[i][0], es[i][1]);
         }
 
-        for (auto it = gp.begin(); it != gp.end(); ++it)
-            find(it->first, gp);
+        for (const auto& [k, v]: uf.parents)
+            uf.find(k);
 
-        vector<double> res(queries.size(), -1.0);
+        vector<double> res(qs.size(), -1.0);
 
-        for (int i = 0; i < res.size(); ++i)
-            if (!gp[queries[i][0]].empty() && !gp[queries[i][1]].empty())
-                if (gp[queries[i][0]] == gp[queries[i][1]])
-                    res[i] = vals[queries[i][0]] / vals[queries[i][1]];
+        for (int i = 0; i < qs.size(); ++i)
+            if (uf.parents.count(qs[i][0]) && uf.parents.count(qs[i][1])
+                                           && uf.parents[qs[i][0]] == uf.parents[qs[i][1]])
+                res[i] = vars[qs[i][0]] / vars[qs[i][1]];
 
         return res;
     }

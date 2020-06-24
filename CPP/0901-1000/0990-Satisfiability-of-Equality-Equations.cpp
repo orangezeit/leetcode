@@ -1,48 +1,35 @@
-class UnionFind {
-private:
-    unordered_map<int, int> parents, ranks;
-public:
-    UnionFind(int n) {
-        for (int i = 0; i < n; ++i) {
-            parents[i] = i;
-            ranks[i] = 0;
-        }
+struct StaticUnion {
+    vector<int> parents, ranks;
+    StaticUnion(int n) : parents(n), ranks(n) {
+        iota(parents.begin(), parents.end(), 0);
     }
 
-    int find(int x) {
+    int find(const int& x) {
         if (x != parents[x])
             parents[x] = find(parents[x]);
         return parents[x];
     }
 
-    void unite(int x, int y) {
-        int px = find(x);
-        int py = find(y);
-
-        if (ranks[px] > ranks[py])
-            parents[py] = px;
-        else if (ranks[px] < ranks[py])
-            parents[px] = py;
-        else {
-            parents[py] = px;
-            ranks[px]++;
-        }
+    void unite(const int& x, const int& y) {
+        int px(find(x)), py(find(y));
+        if (px == py) return;
+        ranks[px] >= ranks[py] ? parents[py] = px : parents[px] = py;
+        if (ranks[px] == ranks[py]) ranks[px]++;
     }
 };
 
 class Solution {
 public:
-    bool equationsPossible(vector<string>& equations) {
-        UnionFind u = UnionFind(26);
+    bool equationsPossible(vector<string>& es) {
+        StaticUnion uf(26);
 
-        for (int i = 0; i < equations.size(); ++i)
-            if (equations[i][1] == '=')
-                u.unite(equations[i][0] - 'a', equations[i][3] - 'a');
+        for (const string& e: es)
+            if (e[1] == '=')
+                uf.unite(e[0] - 'a', e[3] - 'a');
 
-        for (int i = 0; i < equations.size(); ++i)
-            if (equations[i][1] == '!')
-                if (u.find(equations[i][0] - 'a') == u.find(equations[i][3] - 'a'))
-                    return false;
+        for (const string& e: es)
+            if (e[1] == '!' && uf.find(e[0] - 'a') == uf.find(e[3] - 'a'))
+                return false;
 
         return true;
     }

@@ -1,79 +1,67 @@
-class UnionFindStatic {
-private:
-    unordered_map<int, int> ranks;
-public:
-    unordered_map<int, int> parents;
-
-    UnionFindStatic(const vector<int>& v) {
-        for (const int& i: v) parents[i] = i;
+struct StaticUnion {
+    vector<int> parents, ranks;
+    StaticUnion(int n) : parents(n), ranks(n) {
+        iota(parents.begin(), parents.end(), 0);
     }
 
-    int find(int i) {
-        if (i != parents[i])
-            parents[i] = find(parents[i]);
-        return parents[i];
+    int find(const int& x) {
+        if (x != parents[x])
+            parents[x] = find(parents[x]);
+        return parents[x];
     }
 
-    void unite(int i, int j) {
-        int pi = find(i);
-        int pj = find(j);
-
-        ranks[pi] >= ranks[pj] ? parents[pj] = pi : parents[pi] = pj;
-        if (ranks[pi] == ranks[pj]) ranks[pi]++;
+    void unite(const int& x, const int& y) {
+        int px(find(x)), py(find(y));
+        if (px == py) return;
+        ranks[px] >= ranks[py] ? parents[py] = px : parents[px] = py;
+        if (ranks[px] == ranks[py]) ranks[px]++;
     }
 };
 
 class Solution {
 public:
-    vector<int> find_primes(int n) {
-        vector<int> nums(n + 1, 1);
-        vector<int> primes;
-        for (int i = 2; i <= n; ++i) {
-            if (!nums[i]) continue;
-            primes.push_back(i);
-            for (int k = 2; k * i <= n; ++k) {
-                nums[i * k] = 0;
-            }
-        }
-        return primes;
-    }
-
     int largestComponentSize(vector<int>& A) {
-        int n(0);
-        for (const int& a: A) n = max(n, a);
-        vector<int> primes = find_primes(n);
-        unordered_map<int, vector<int>> factors;
-        UnionFindStatic uf = UnionFindStatic(A);
-        //cout << "a";
-        for (const int& a: A) {
-            int t(a);
-            for (int i = 0; i < primes.size(); ++i) {
-                if (primes[i] > t) break;
-                if (primes[i] > sqrt(a) && a == t) {
-                    //cout << primes[i] << " " << a << endl;
-                    factors[a].push_back(a);
-                    break;
-                }
-                if (t % primes[i] == 0) {
-                    factors[primes[i]].push_back(a);
-                    while (t % primes[i] == 0) t /= primes[i];
-                }
+        int n(A.size());
+        int m(*max_element(A.begin(), A.end()));
+        vector<bool> is_c(m + 1);
+        vector<int> ps;
+
+        for (int i = 2; i <= m; ++i) {
+            if (!is_c[i])
+                ps.push_back(i);
+            for (int j = 0; j < ps.size() && ps[j] * i <= m; ++j) {
+                is_c[i * ps[j]] = true;
+                if (i % ps[j] == 0) break;
             }
         }
-        for (auto& f: factors) {
-            for (int i = 0; i + 1 < f.second.size(); ++i) {
-                //cout << f[i] << " " << f[i+1] << endl;
-                uf.unite(f.second[i], f.second[i+1]);
+
+        set<int> pps(ps.begin(), ps.end());
+        unordered_map<int, vector<int>> factors;
+        StaticUnion uf(n);
+
+        for (int i = 0; i < n; ++i) {
+            if (pps.count(A[i])) {
+                factors[A[i]].emplace_back(i);
+                uf.unite(factors[A[i]].front(), factors[A[i]].back());
+                continue;
+            }
+
+            int t(A[i]);
+
+            for (const int& p: ps) {
+                if (p > t) break;
+                if (t % p == 0) {
+                    factors[p].emplace_back(i);
+                    uf.unite(factors[p].front(), factors[p].back());
+                    while (t % p == 0) t /= p;
+                }
             }
         }
 
         unordered_map<int, int> g;
-        int ans(0);
-
-        for (const int& a: A) {
-            ans = max(ans, ++g[uf.find(a)]);
-        }
-
+        int ans(1);
+        for (int i = 0; i < n; ++i)
+            ans = max(ans, ++g[uf.find(i)]);
         return ans;
     }
 };
