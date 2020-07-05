@@ -22,23 +22,15 @@ class Solution {
 public:
     int makeConnected(int n, vector<vector<int>>& connections) {
         StaticUnion uf(n);
-        unordered_map<int, unordered_set<int>> cnts;
         int extra(0);
-        unordered_set<int> g;
-
-        for (vector<int>& c: connections) {
-            cnts[c[0]].insert(c[1]);
-            cnts[c[1]].insert(c[0]);
-            if (uf.find(c[0]) != uf.find(c[1])) {
+        for (vector<int>& c: connections)
+            if (uf.find(c[0]) != uf.find(c[1]))
                 uf.unite(c[0], c[1]);
-            } else {
+            else
                 extra++;
-            }
-        }
-
-        for (const int& i: uf.parents)
-            g.insert(uf.find(i));
-
-        return extra + 1 < g.size() ? -1 : (g.size() - 1);
+        for (int i = 0; i < n; ++i)
+            uf.find(i);
+        int group = unordered_set<int>(uf.parents.begin(), uf.parents.end()).size();
+        return extra + 1 < group ? -1 : (group - 1);
     }
 };

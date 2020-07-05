@@ -1,14 +1,9 @@
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
 class Solution {
 public:
     ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        // N = max length of two lists
+        // Time Complexity: O(N)
+        // Space Complexity: O(N)
         ListNode* num = new ListNode(0);
         ListNode* head = num;
 

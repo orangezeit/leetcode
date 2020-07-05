@@ -33,13 +33,10 @@ public:
             rec[uf.find(i)].emplace_back(i);
 
         for (const auto& [k, v]: rec) {
-            vector<int> w(v);
-            string t(s);
-            sort(w.begin(), w.end(),
-                 [&s](const int& t1, const int& t2){return s[t1] < s[t2];});
-            for (int i = 0; i < w.size(); ++i)
-                t[v[i]] = s[w[i]];
-            s = t;
+            string t;
+            for (const int& i: v) t += s[i];
+            sort(t.begin(), t.end());
+            for (int i = 0; i < v.size(); ++i) s[v[i]] = t[i];
         }
 
         return s;

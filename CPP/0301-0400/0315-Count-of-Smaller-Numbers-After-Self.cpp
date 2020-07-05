@@ -13,7 +13,6 @@ public:
         for (int n: nums) {
             // update fenwick
             for (int i = ranks[n]; i <= ranks.size(); i += i & (-i)) {
-                //cout << i << endl;
                 fenwick[i]++;
             }
 
@@ -23,7 +22,6 @@ public:
             }
             k--;
         }
-        //reverse(ans.begin(), ans.end());
         return ans;
     }
 };

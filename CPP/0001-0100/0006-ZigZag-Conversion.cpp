@@ -1,6 +1,8 @@
 class Solution {
 public:
     string convert(string s, int numRows) {
+        // Time Complexity: O(N)
+        // Space Complexity: O(N)
         if (numRows == 1) return s;
 
         string s2, strs[numRows];

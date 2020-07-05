@@ -1,48 +1,37 @@
 class NumArray {
 private:
-    vector<int> ns;
-    vector<int> fenwick;
-    int lowbit(int x) { return x & (-x); }
+    int n;
+    vector<int> ns, tree;
 public:
+    void update_each(const int& k, const int& val) {
+        for (int i = k; i <= n; i += i & (-i))
+            tree[i] += val;
+    }
+
+    int read(const int& k) {
+        int sum(0);
+        for (int i = k; i > 0; i -= i & (-i))
+            sum += tree[i];
+        return sum;
+    }
+
     NumArray(vector<int>& nums) {
-        ns = nums;
-        fenwick = vector<int>(nums.size(), 0);
-        int i = 1;
-
-        while(i-1 < nums.size()) {
-            int k = i;
-            while(k-1 < nums.size()) {
-                fenwick[k-1] += nums[i-1];
-                k += lowbit(k);
-            }
-            i++;
-        }
-
-        //for (int i = 0; i < nums.size(); ++i) cout << fenwick[i] << endl;
-        //for (int i = 0; i < nums.size(); ++i) cout << ns[i] << endl;
+        if (nums.empty()) return;
+        n = nums.size();
+        swap(ns, nums);
+        tree.resize(n + 1);
+        for (int i = 1; i <= n; ++i)
+            update_each(i, ns[i - 1]);
     }
 
     void update(int i, int val) {
-        i++;
-        int adj = val - ns[i-1];
-        ns[i-1] = val;
-        while (i-1 < ns.size()) {
-            fenwick[i-1] += adj;
-            i += lowbit(i);
-        }
-    }
-
-    int sum(int x) {
-        int s = 0;
-        while (x > 0) {
-            s += fenwick[x-1];
-            x -= lowbit(x);
-        }
-        return s;
+        val -= ns[i++];
+        update_each(i, val);
+        ns[--i] += val;
     }
 
     int sumRange(int i, int j) {
-        return sum(j+1) - sum(i);
+        return read(j + 1) - read(i);
     }
 };
 

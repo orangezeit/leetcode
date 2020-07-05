@@ -1,6 +1,8 @@
 class Solution {
 public:
     vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        // Time Complexity: O(N^3)
+        // Space Complexity: O(N^2)
         unordered_map<int, vector<pair<int, int>>> ps;
         int n = nums.size();
         for (int i = 0; i < n; ++i) {
@@ -22,7 +24,7 @@ public:
                 }
             }
         }
-        
+
         return vector<vector<int>>(ans.begin(), ans.end());
     }
 };

@@ -23,7 +23,8 @@ public:
         DynamicUnion<int> uf;
 
         for (const vector<int>& e: edges) {
-            if (uf.parents[e[0]] && uf.parents[e[1]] && uf.find(e[0]) == uf.find(e[1])) return {e[0], e[1]};
+            if (uf.parents[e[0]] && uf.parents[e[1]] && uf.find(e[0]) == uf.find(e[1]))
+                return {e[0], e[1]};
             if (!uf.parents[e[0]]) uf.parents[e[0]] = e[0];
             if (!uf.parents[e[1]]) uf.parents[e[1]] = e[1];
             uf.unite(e[0], e[1]);

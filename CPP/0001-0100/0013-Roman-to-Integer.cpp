@@ -1,6 +1,8 @@
 class Solution {
 public:
     int romanToInt(string s) {
+        // Time Complexity: O(N)
+        // Space Complexity: O(N)
         vector<int> nums(s.length() + 1);
 
         for (int i = 0; i < s.length(); ++i) {

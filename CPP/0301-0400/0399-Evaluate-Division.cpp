@@ -34,7 +34,6 @@ public:
             } else if (!vars.count(es[i][1])) {
                 vars[es[i][1]] = vars[es[i][0]] / vs[i];
             } else {
-
                 double x = vars[es[i][1]];
 
                 for (const auto& [k, v]: uf.parents) {

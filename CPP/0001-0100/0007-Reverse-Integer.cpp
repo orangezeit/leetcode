@@ -1,10 +1,8 @@
 class Solution {
 public:
-    void reverse(basic_string<char>::iterator begin, basic_string<char>::iterator end) {
-        while (begin < end) swap(*(begin++), *(--end));
-    }
-
     int reverse(int x) {
+        // Time Complexity: O(N)
+        // Space Complexity: O(N)
         string str(to_string(x));
         reverse(str.begin(), str.end());
         if (x < 0) str.pop_back();

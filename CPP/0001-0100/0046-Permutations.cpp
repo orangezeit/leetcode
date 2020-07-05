@@ -1,3 +1,4 @@
+class Solution {
 private:
     vector<vector<int>> permutes;
 public:
@@ -11,7 +12,7 @@ public:
                 permuteHelper(nums, permute);
                 nums.insert(nums.begin()+i, permute.back());
                 permute.pop_back();
-                
+
             }
         }
     }
@@ -20,3 +21,4 @@ public:
         permuteHelper(nums, permute);
         return permutes;
     }
+};

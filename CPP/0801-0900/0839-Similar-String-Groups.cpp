@@ -25,11 +25,11 @@ public:
         StaticUnion uf(n);
 
         auto similar = [](const string& s, const string& t) {
-            int n = 0;
+            int c = 0;
 
             for (int i = 0; i < s.length(); ++i)
                 if (s[i] != t[i])
-                    if (++n > 2)
+                    if (++c > 2)
                         return false;
 
             return true;
@@ -37,7 +37,7 @@ public:
 
         for (int i = 0; i < n; ++i)
             for (int j = i + 1; j < n; ++j)
-                if (uf.find(i) != uf.find(j) && similar(strs[i], strs[j]))
+                if (uf.find(i) != uf.find(j) && similar(a[i], a[j]))
                     uf.unite(i, j);
 
         for (int i = 0; i < n; ++i)

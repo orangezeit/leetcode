@@ -44,7 +44,8 @@ public:
             }
         }
 
-        for (int& i: uf.parents) i = uf.find(i);
+        for (int i = 0; i < 4 * m * n; ++i)
+            uf.find(i);
         return unordered_set<int>(uf.parents.begin(), uf.parents.end()).size();
     }
 };

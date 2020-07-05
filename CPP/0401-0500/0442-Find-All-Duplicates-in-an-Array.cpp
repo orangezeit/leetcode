@@ -1,13 +1,13 @@
+class Solution {
+public:
     vector<int> findDuplicates(vector<int>& nums) {
-        unordered_set<int> record, repeated;
-        
-        for (int i = 0; i < nums.size(); ++i) {
-            if (record.find(nums[i]) == record.end()) {
-                record.insert(nums[i]);
-            } else {
-                repeated.insert(nums[i]);
-            }
+        vector<int> ans;
+        for (const int& i: nums) {
+            int idx = abs(i) - 1;
+            if (nums[idx] < 0)
+                ans.emplace_back(abs(i));
+            nums[idx] *= -1;
         }
-        
-        return vector<int>(repeated.begin(), repeated.end());
+        return ans;
     }
+};

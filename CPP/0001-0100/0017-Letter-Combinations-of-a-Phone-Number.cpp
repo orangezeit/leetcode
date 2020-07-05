@@ -1,6 +1,8 @@
 class Solution {
 public:
     vector<string> letterCombinations(string digits) {
+        // Time Complexity: O(3^N - 4^N)
+        // Space Complexity: O(3^N - 4^N)
         vector<string> ans;
         if (digits.empty()) return ans;
 
@@ -9,7 +11,7 @@ public:
 
         function<void(const int&, string&)> dfs = [&](const int& i, string& s){
             if (i == digits.size()) {
-                ans.push_back(s);
+                ans.emplace_back(s);
                 return;
             }
             for (const char& c: dict[digits[i] - '2']) {
