@@ -1,21 +1,21 @@
-private:
-    vector<vector<int>> subs;
+class Solution {
 public:
-    void subsetHelper(vector<int> nums, vector<int> sub, int k) {
-        if (nums.size() == k) {
-            if (find(subs.begin(), subs.end(), sub) == subs.end()) {
-                subs.push_back(sub);
-            }
-        } else {
-            subsetHelper(nums, sub, k+1);
-            sub.push_back(nums[k]);
-            subsetHelper(nums, sub, k+1);
-        }
-    }
-    
     vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        // Time Complexity: O(2^N)
+        // Space Complexity: O(2^N)
         sort(nums.begin(), nums.end());
-        vector<int> sub;
-        subsetHelper(nums, sub, 0);
-        return subs;
+        vector<int> subset;
+        vector<vector<int>> ans;
+        function<void(int)> dfs = [&](int k) {
+            ans.emplace_back(subset);
+            for (int i = k; i < nums.size(); ++i) {
+                if (i != k && nums[i] == nums[i - 1]) continue;
+                subset.emplace_back(nums[i]);
+                dfs(i + 1);
+                subset.pop_back();
+            }
+        };
+        dfs(0);
+        return ans;
     }
+};

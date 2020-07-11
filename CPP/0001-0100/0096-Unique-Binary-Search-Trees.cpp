@@ -1,11 +1,11 @@
-    double factorial(int a, int b) {
-        if (a == b) {
-            return double(a);
-        } else {
-            return b * factorial(a, b-1);
-        }
-    }
-    
+class Solution {
+public:
     int numTrees(int n) {
-        return int(round(factorial(n + 1, 2 * n) / factorial(1, n+1)));
+        // Time Complexity: O(N)
+        // Space Complexity: O(1)
+        long ans(1);
+        for (int i = n + 2; i <= 2 * n; ++i)
+            ans = ans * i / (i - n - 1);
+        return ans / n;
     }
+};

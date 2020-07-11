@@ -1,30 +1,24 @@
-    // Time Complexity: O(n)
-    // Space Complexity: O(n)
-    // traverse all nodes and record them to see if anywhere is not ordered
-    
-    void inorderHelper(TreeNode* root, vector<int>& vals) {
-        if (root) {
-            inorderHelper(root->left, vals);
-            vals.push_back(root->val);
-            inorderHelper(root->right, vals);
-        }
-    }
-    
+class Solution {
+public:
+    TreeNode* prev = nullptr;
     bool isValidBST(TreeNode* root) {
-        if (!root) {
-            return true;
-        } else if (!root->left && !root->right) {
-            return true;
-        }
-        
-        vector<int> vals;
-        inorderHelper(root, vals);
-        
-        for (int i = 0; i < vals.size()-1; ++i) {
-            if (vals[i] >= vals[i+1]) {
-                return false;
-            }
-        }
-        
-        return true;
+        // Time Complexity: O(N)
+        // Space Complexity: O(lg N)
+        if (!root) return true;
+        if (!isValidBST(root->left)) return false;
+        if (prev && prev->val >= root->val) return false;
+        prev = root;
+        return isValidBST(root->right);
     }
+};
+
+class Solution {
+public:
+    bool isValidBST(TreeNode* root, TreeNode* minNode=nullptr, TreeNode* maxNode=nullptr) {
+        // Time Complexity: O(N)
+        // Space Complexity: O(lg N)
+        if (!root) return false;
+        if (minNode && root->val <= minNode->val || maxNode && root->val >= maxNode->val) return false;
+        return isValidBST(root->left, minNode, root) && isValidBST(root->right, root, maxNode);
+    }
+};

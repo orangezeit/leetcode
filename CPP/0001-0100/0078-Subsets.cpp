@@ -1,17 +1,19 @@
-private:
-    vector<vector<int>> subs;
+class Solution {
 public:
-    void subsetHelper(vector<int> nums, vector<int> sub, int k) {
-        if (nums.size() == k) {
-            subs.push_back(sub);
-        } else {
-            subsetHelper(nums, sub, k+1);
-            sub.push_back(nums[k]);
-            subsetHelper(nums, sub, k+1);
-        }
-    }
     vector<vector<int>> subsets(vector<int>& nums) {
-        vector<int> sub;
-        subsetHelper(nums, sub, 0);
-        return subs;
+        // Time Complexity: O(2^N)
+        // Space Complexity: O(2^N)
+        vector<int> subset;
+        vector<vector<int>> ans;
+        function<void(int)> dfs = [&](int k) {
+            ans.emplace_back(subset);
+            for (int i = k; i < nums.size(); ++i) {
+                subset.emplace_back(nums[i]);
+                dfs(i + 1);
+                subset.pop_back();
+            }
+        };
+        dfs(0);
+        return ans;
     }
+};

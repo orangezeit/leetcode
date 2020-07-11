@@ -1,15 +1,17 @@
+class Solution {
+public:
     ListNode* reverseList(ListNode* head) {
-        ListNode* next;
-        ListNode* current = head;
-        ListNode* prev = NULL;
-        
-        while (current != NULL) {
-            next = current->next;
-            current->next = prev;
-            prev = current;
-            current = next;
+        // Time Complexity: O(N)
+        // Space Complexity: O(1)
+        ListNode *curr = head, *prev = nullptr;
+
+        while (curr) {
+            ListNode* temp = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = temp;
         }
-        
-        head = prev;
-        return head;
+
+        return prev;
     }
+};
