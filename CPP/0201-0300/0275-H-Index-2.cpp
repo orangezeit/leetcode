@@ -1,7 +1,6 @@
 class Solution {
 public:
     int hIndex(vector<int>& citations) {
-        sort(citations.begin(), citations.end());
         const int n = citations.size();
         int left(0), right(n);
         while (left < right) {
